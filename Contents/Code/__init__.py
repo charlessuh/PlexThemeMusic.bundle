@@ -9,23 +9,22 @@ class PlexThemeMusicAgent(Agent.TV_Shows):
   languages = [Locale.Language.NoLanguage]
   primary_provider = False
   contributes_to = [
-    'com.plexapp.agents.thetvdb',
-    'com.plexapp.agents.thetvdbdvdorder',
-    'com.plexapp.agents.themoviedb'
+    'com.github.charlessuh.plexapp.agents.thetvdb',
+    'com.github.charlessuh.plexapp.agents.themoviedb',
   ]
 
   def search(self, results, media, lang):
 
-    if media.primary_agent == 'com.plexapp.agents.thetvdb' or media.primary_agent == 'com.plexapp.agents.thetvdbdvdorder':
+    if media.primary_agent == 'com.github.charlessuh.plexapp.agents.thetvdb':
       results.Append(MetadataSearchResult(
         id = media.primary_metadata.id,
         score = 100
       ))
 
-    elif media.primary_agent == 'com.plexapp.agents.themoviedb':
+    elif media.primary_agent == 'com.github.charlessuh.plexapp.agents.themoviedb':
       # Get the TVDB id from the Movie Database Agent
       tvdb_id = Core.messaging.call_external_function(
-        'com.plexapp.agents.themoviedb',
+        media.primary_agent,
         'MessageKit:GetTvdbId',
         kwargs = dict(
           tmdb_id = media.primary_metadata.id
