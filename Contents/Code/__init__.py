@@ -1,5 +1,5 @@
 #Plex Theme Music
-THEME_URL = 'http://tvthemes.plexapp.com/%s.mp3'
+THEME_URL = 'https://tvthemes.plexapp.com/%s.mp3'
 
 def Start():
   HTTP.CacheTime = CACHE_1DAY
@@ -10,12 +10,13 @@ class PlexThemeMusicAgent(Agent.TV_Shows):
   primary_provider = False
   contributes_to = [
     'com.plexapp.agents.thetvdb',
+    'com.plexapp.agents.thetvdbdvdorder',
     'com.plexapp.agents.themoviedb'
   ]
 
   def search(self, results, media, lang):
 
-    if media.primary_agent == 'com.plexapp.agents.thetvdb':
+    if media.primary_agent == 'com.plexapp.agents.thetvdb' or media.primary_agent == 'com.plexapp.agents.thetvdbdvdorder':
       results.Append(MetadataSearchResult(
         id = media.primary_metadata.id,
         score = 100
@@ -37,8 +38,8 @@ class PlexThemeMusicAgent(Agent.TV_Shows):
           score = 100
         ))
 
-  def update(self, metadata, media, lang):
-    if THEME_URL % metadata.id not in metadata.themes:
+  def update(self, metadata, media, lang, force=False):
+    if force or THEME_URL % metadata.id not in metadata.themes:
       try:
         metadata.themes[THEME_URL % metadata.id] = Proxy.Media(HTTP.Request(THEME_URL % metadata.id))
       except:
